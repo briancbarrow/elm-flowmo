@@ -6,12 +6,11 @@ module Main exposing (..)
 --   https://guide.elm-lang.org/architecture/buttons.html
 --
 
-
 import Browser
-import Browser.Navigation as Nav
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Url
+import Html.Events exposing (onClick)
+import Time
+
 
 
 -- MAIN
@@ -19,14 +18,12 @@ import Url
 
 main : Program () Model Msg
 main =
-  Browser.application
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    , onUrlChange = UrlChanged
-    , onUrlRequest = LinkClicked
-    }
+    Browser.document
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 
@@ -34,14 +31,27 @@ main =
 
 
 type alias Model =
-  { key : Nav.Key
-  , url : Url.Url
-  }
+    { time : Float
+    , direction : Direction
+    , running : Bool
+    , lastPosix : Time.Posix
+    }
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-  ( Model key url, Cmd.none )
+type Direction
+    = CountingUp
+    | CountingDown
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { time = 0
+      , direction = CountingUp
+      , running = False
+      , lastPosix = Time.millisToPosix 0
+      }
+    , Cmd.none
+    )
 
 
 
@@ -49,25 +59,77 @@ init flags url key =
 
 
 type Msg
-  = LinkClicked Browser.UrlRequest
-  | UrlChanged Url.Url
+    = Start
+    | Stop
+    | ToggleDirection
+    | Tick Time.Posix
+
+
+
+-- = LinkClicked Browser.UrlRequest
+-- | UrlChanged Url.Url
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  case msg of
-    LinkClicked urlRequest ->
-      case urlRequest of
-        Browser.Internal url ->
-          ( model, Nav.pushUrl model.key (Url.toString url) )
+    case msg of
+        Start ->
+            ( { model | running = True, lastPosix = Time.millisToPosix 0 }, Cmd.none )
 
-        Browser.External href ->
-          ( model, Nav.load href )
+        Stop ->
+            ( { model | running = False }, Cmd.none )
 
-    UrlChanged url ->
-      ( { model | url = url }
-      , Cmd.none
-      )
+        ToggleDirection ->
+            ( { model
+                | direction =
+                    case model.direction of
+                        CountingDown ->
+                            CountingUp
+
+                        CountingUp ->
+                            CountingDown
+              }
+            , Cmd.none
+            )
+
+        Tick now ->
+            if not model.running then
+                ( model, Cmd.none )
+
+            else
+                let
+                    -- If lastPosix is 0, this is the first tick after starting
+                    isFirstTick : Bool
+                    isFirstTick =
+                        Time.posixToMillis model.lastPosix == 0
+
+                    deltaMilli : Float
+                    deltaMilli =
+                        if isFirstTick then
+                            0
+
+                        else
+                            toFloat (Time.posixToMillis now - Time.posixToMillis model.lastPosix)
+
+                    deltaSec : Float
+                    deltaSec =
+                        deltaMilli / 1000
+
+                    newTime : Float
+                    newTime =
+                        case model.direction of
+                            CountingUp ->
+                                model.time + deltaSec
+
+                            CountingDown ->
+                                model.time - deltaSec
+                in
+                ( { model
+                    | time = newTime
+                    , lastPosix = now
+                  }
+                , Cmd.none
+                )
 
 
 
@@ -76,7 +138,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-  Sub.none
+    Time.every 100 Tick
 
 
 
@@ -85,21 +147,37 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-  { title = "URL Interceptor"
-  , body =
-      [ text "The current URL is: "
-      , b [] [ text (Url.toString model.url) ]
-      , ul []
-          [ viewLink "/home"
-          , viewLink "/profile"
-          , viewLink "/reviews/the-century-of-the-self"
-          , viewLink "/reviews/public-opinion"
-          , viewLink "/reviews/shah-of-shahs"
-          ]
-      ]
-  }
+    let
+        totalSeconds =
+            model.time |> round
 
+        hours =
+            totalSeconds // 3600
 
-viewLink : String -> Html msg
-viewLink path =
-  li [] [ a [ href path ] [ text path ] ]
+        minutes =
+            (totalSeconds - (hours * 3600)) // 60
+
+        seconds =
+            totalSeconds - (hours * 3600) - (minutes * 60)
+
+        padZero num =
+            if num < 10 then
+                "0" ++ String.fromInt num
+
+            else
+                String.fromInt num
+
+        timeDisplay =
+            if hours > 0 then
+                padZero hours ++ ":" ++ padZero minutes ++ ":" ++ padZero seconds
+
+            else
+                padZero minutes ++ ":" ++ padZero seconds
+    in
+    { title = "Flowmodoro Technique"
+    , body =
+        [ h1 [] [ text timeDisplay ]
+        , button [ onClick Start ] [ text "Start" ]
+        , button [ onClick Stop ] [ text "Stop" ]
+        ]
+    }
