@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 -- Press buttons to increment and decrement a counter.
 --
@@ -10,6 +10,13 @@ import Browser
 import Html exposing (..)
 import Html.Events exposing (onClick)
 import Time
+
+
+
+-- PORTS
+
+
+port playSound : () -> Cmd msg
 
 
 
@@ -77,7 +84,11 @@ update msg model =
             ( { model | running = True, lastPosix = Time.millisToPosix 0 }, Cmd.none )
 
         Stop ->
-            ( { model | running = False }, Cmd.none )
+            let
+                modelWithNewTime =
+                    { model | running = False, time = model.time / 5 }
+            in
+            update ToggleDirection modelWithNewTime
 
         ToggleDirection ->
             ( { model
@@ -123,12 +134,30 @@ update msg model =
 
                             CountingDown ->
                                 model.time - deltaSec
+
+                    stopCounter : Bool
+                    stopCounter =
+                        newTime <= 0 && model.direction == CountingDown
+
+                    -- Check if we just crossed zero while counting down
+                    justHitZero : Bool
+                    justHitZero =
+                        model.direction == CountingDown && model.time > 0 && newTime <= 0
+
+                    soundCommand : Cmd Msg
+                    soundCommand =
+                        if justHitZero then
+                            playSound ()
+
+                        else
+                            Cmd.none
                 in
                 ( { model
                     | time = newTime
                     , lastPosix = now
+                    , running = not stopCounter
                   }
-                , Cmd.none
+                , soundCommand
                 )
 
 
