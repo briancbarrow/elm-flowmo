@@ -8,6 +8,7 @@ port module Main exposing (..)
 
 import Browser
 import Html exposing (..)
+import Html.Attributes exposing (disabled)
 import Html.Events exposing (onClick)
 import Time
 
@@ -206,7 +207,7 @@ view model =
     { title = "Flowmodoro Technique"
     , body =
         [ h1 [] [ text timeDisplay ]
-        , button [ onClick Start ] [ text "Start" ]
-        , button [ onClick Stop ] [ text "Stop" ]
+        , button [ onClick Start, disabled model.running ] [ text "Start" ]
+        , button [ onClick Stop, disabled (not model.running) ] [ text "Stop" ]
         ]
     }

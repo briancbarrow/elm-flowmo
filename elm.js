@@ -5721,6 +5721,15 @@ var $author$project$Main$update = F2(
 var $author$project$Main$Start = {$: 'Start'};
 var $author$project$Main$Stop = {$: 'Stop'};
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -5765,7 +5774,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Start)
+						$elm$html$Html$Events$onClick($author$project$Main$Start),
+						$elm$html$Html$Attributes$disabled(model.running)
 					]),
 				_List_fromArray(
 					[
@@ -5775,7 +5785,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Stop)
+						$elm$html$Html$Events$onClick($author$project$Main$Stop),
+						$elm$html$Html$Attributes$disabled(!model.running)
 					]),
 				_List_fromArray(
 					[
