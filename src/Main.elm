@@ -216,25 +216,46 @@ view model =
         else
             "Flowmodoro Technique"
     , body =
-        [ div [ class "text-center font-sans p-5" ]
-            [ h1
-                [ class "text-6xl text-gray-800 mb-8 font-light" ]
-                [ text timeDisplay ]
-            , div [ class "mb-5" ]
-                [ button
-                    [ onClick Start
-                    , disabled model.running
-                    , class
-                        "bg-green-500 text-white border-none py-4 px-8 text-lg mx-2 rounded-md transition-all duration-200 disabled:opacity-50 hover:bg-green-600 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+        [ div [ class "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center font-sans" ]
+            [ div [ class "bg-gradient-to-br from-blue-100 to-indigo-200 rounded-3xl shadow-xl border border-blue-100 p-12 max-w-md w-full mx-4" ]
+                [ -- Timer section
+                  div [ class "text-center mb-8" ]
+                    [ div [ class "relative inline-flex items-center justify-center" ]
+                        [ div [ class "w-32 h-32 flex items-center justify-center" ]
+                            [ div [ class "text-center" ]
+                                [ div [ class "text-blue-600 text-lg font-semibold mb-2" ]
+                                    [ text
+                                        (case model.direction of
+                                            CountingUp ->
+                                                "Focus"
+
+                                            CountingDown ->
+                                                "Break"
+                                        )
+                                    ]
+                                , div [ class "text-6xl font-light text-gray-900 drop-shadow-lg" ]
+                                    [ text timeDisplay ]
+                                ]
+                            ]
+                        ]
                     ]
-                    [ text "Start" ]
-                , button
-                    [ onClick Stop
-                    , disabled (not model.running)
-                    , class
-                        "bg-red-500 text-white border-none py-4 px-8 text-lg mx-2 rounded-md transition-all duration-200 cursor-pointer disabled:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-600 "
+                , -- Buttons section
+                  div [ class "flex justify-center space-x-4" ]
+                    [ button
+                        [ onClick Start
+                        , disabled model.running
+                        , class
+                            "bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-none py-3 px-6 text-base rounded-lg transition-all duration-200 disabled:opacity-50 hover:from-blue-600 hover:to-indigo-600 cursor-pointer disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        ]
+                        [ text "Start" ]
+                    , button
+                        [ onClick Stop
+                        , disabled (not model.running)
+                        , class
+                            "bg-gradient-to-r from-slate-500 to-gray-500 text-white border-none py-3 px-6 text-base rounded-lg transition-all duration-200 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed shadow-lg hover:from-slate-600 hover:to-gray-600 hover:shadow-xl transform hover:-translate-y-0.5"
+                        ]
+                        [ text "Stop" ]
                     ]
-                    [ text "Stop" ]
                 ]
             ]
         ]
