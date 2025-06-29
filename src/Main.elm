@@ -223,7 +223,16 @@ view model =
                     [ div [ class "relative inline-flex items-center justify-center" ]
                         [ div [ class "w-32 h-32 flex items-center justify-center" ]
                             [ div [ class "text-center" ]
-                                [ div [ class "text-blue-600 text-lg font-semibold mb-2" ]
+                                [ div
+                                    [ class
+                                        (case model.direction of
+                                            CountingUp ->
+                                                "text-blue-600 text-lg font-semibold mb-2 transition-all duration-500 ease-in-out"
+
+                                            CountingDown ->
+                                                "text-green-600 text-lg font-semibold mb-2 transition-all duration-500 ease-in-out"
+                                        )
+                                    ]
                                     [ text
                                         (case model.direction of
                                             CountingUp ->

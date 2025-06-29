@@ -5836,14 +5836,22 @@ var $author$project$Main$view = function (model) {
 																$elm$html$Html$div,
 																_List_fromArray(
 																	[
-																		$elm$html$Html$Attributes$class('text-blue-600 text-lg font-semibold mb-2')
+																		$elm$html$Html$Attributes$class(
+																		function () {
+																			var _v0 = model.direction;
+																			if (_v0.$ === 'CountingUp') {
+																				return 'text-blue-600 text-lg font-semibold mb-2 transition-all duration-500 ease-in-out';
+																			} else {
+																				return 'text-green-600 text-lg font-semibold mb-2 transition-all duration-500 ease-in-out';
+																			}
+																		}())
 																	]),
 																_List_fromArray(
 																	[
 																		$elm$html$Html$text(
 																		function () {
-																			var _v0 = model.direction;
-																			if (_v0.$ === 'CountingUp') {
+																			var _v1 = model.direction;
+																			if (_v1.$ === 'CountingUp') {
 																				return 'Focus';
 																			} else {
 																				return 'Break';
