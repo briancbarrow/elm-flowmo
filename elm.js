@@ -5699,21 +5699,33 @@ var $author$project$Main$update = F2(
 						var deltaMilli = isFirstTick ? 0 : ($elm$time$Time$posixToMillis(now) - $elm$time$Time$posixToMillis(model.lastPosix));
 						var deltaSec = deltaMilli / 1000;
 						var newTime = function () {
-							var _v2 = model.direction;
-							if (_v2.$ === 'CountingUp') {
+							var _v3 = model.direction;
+							if (_v3.$ === 'CountingUp') {
 								return model.time + deltaSec;
 							} else {
 								return model.time - deltaSec;
 							}
 						}();
 						var justHitZero = _Utils_eq(model.direction, $author$project$Main$CountingDown) && ((model.time > 0) && (newTime <= 0));
-						var soundCommand = justHitZero ? $author$project$Main$playSound(_Utils_Tuple0) : $elm$core$Platform$Cmd$none;
 						var stopCounter = (newTime <= 0) && _Utils_eq(model.direction, $author$project$Main$CountingDown);
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{lastPosix: now, running: !stopCounter, time: newTime}),
-							soundCommand);
+						if (justHitZero) {
+							var _v2 = A2(
+								$author$project$Main$update,
+								$author$project$Main$ToggleDirection,
+								_Utils_update(
+									model,
+									{lastPosix: now, running: false, time: newTime}));
+							var newModel = _v2.a;
+							return _Utils_Tuple2(
+								newModel,
+								$author$project$Main$playSound(_Utils_Tuple0));
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{lastPosix: now, running: !stopCounter, time: newTime}),
+								$elm$core$Platform$Cmd$none);
+						}
 					}
 			}
 		}
@@ -5721,6 +5733,15 @@ var $author$project$Main$update = F2(
 var $author$project$Main$Start = {$: 'Start'};
 var $author$project$Main$Stop = {$: 'Stop'};
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -5730,6 +5751,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -5764,36 +5786,59 @@ var $author$project$Main$view = function (model) {
 		body: _List_fromArray(
 			[
 				A2(
-				$elm$html$Html$h1,
-				_List_Nil,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(timeDisplay)
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$Start),
-						$elm$html$Html$Attributes$disabled(model.running)
+						$elm$html$Html$Attributes$class('text-center font-sans p-5')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Start')
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$Stop),
-						$elm$html$Html$Attributes$disabled(!model.running)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Stop')
+						A2(
+						$elm$html$Html$h1,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('text-6xl text-gray-800 mb-8 font-light')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(timeDisplay)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('mb-5')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Main$Start),
+										$elm$html$Html$Attributes$disabled(model.running),
+										$elm$html$Html$Attributes$class('bg-green-500 text-white border-none py-4 px-8 text-lg mx-2 rounded-md transition-all duration-200 disabled:opacity-50 hover:bg-green-600 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Start')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Main$Stop),
+										$elm$html$Html$Attributes$disabled(!model.running),
+										$elm$html$Html$Attributes$class('bg-red-500 text-white border-none py-4 px-8 text-lg mx-2 rounded-md transition-all duration-200 cursor-pointer disabled:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-600 ')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Stop')
+									]))
+							]))
 					]))
 			]),
-		title: 'Flowmodoro Technique'
+		title: model.running ? timeDisplay : 'Flowmodoro Technique'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
