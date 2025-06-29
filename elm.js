@@ -5706,8 +5706,8 @@ var $author$project$Main$update = F2(
 								return model.time - deltaSec;
 							}
 						}();
-						var justHitZero = _Utils_eq(model.direction, $author$project$Main$CountingDown) && ((model.time > 0) && (newTime <= 0));
 						var stopCounter = (newTime <= 0) && _Utils_eq(model.direction, $author$project$Main$CountingDown);
+						var justHitZero = stopCounter && (model.time > 0);
 						if (justHitZero) {
 							var _v2 = A2(
 								$author$project$Main$update,

@@ -14,6 +14,7 @@ The Flowtime Technique is a productivity method that combines the principles of 
 - [x] Clean, modern UI with Tailwind CSS
 - [x] Real-time display in browser tab title
 - [x] Clean design
+- [ ] Reset timer functionality
 
 ## Potential Future Features
 

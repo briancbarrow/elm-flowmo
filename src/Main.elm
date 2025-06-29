@@ -143,7 +143,7 @@ update msg model =
                     -- Check if we just crossed zero while counting down
                     justHitZero : Bool
                     justHitZero =
-                        model.direction == CountingDown && model.time > 0 && newTime <= 0
+                        stopCounter && model.time > 0
                 in
                 if justHitZero then
                     let
