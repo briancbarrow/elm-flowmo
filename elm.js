@@ -5714,7 +5714,7 @@ var $author$project$Main$update = F2(
 								$author$project$Main$ToggleDirection,
 								_Utils_update(
 									model,
-									{lastPosix: now, running: false, time: newTime}));
+									{lastPosix: now, running: false, time: 0}));
 							var newModel = _v2.a;
 							return _Utils_Tuple2(
 								newModel,
