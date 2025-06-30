@@ -86,8 +86,15 @@ update msg model =
 
         Stop ->
             let
+                newTime =
+                    if model.direction == CountingDown then
+                        0
+
+                    else
+                        model.time / 5
+
                 modelWithNewTime =
-                    { model | running = False, time = model.time / 5 }
+                    { model | running = False, time = newTime }
             in
             update ToggleDirection modelWithNewTime
 

@@ -5667,9 +5667,10 @@ var $author$project$Main$update = F2(
 							}),
 						$elm$core$Platform$Cmd$none);
 				case 'Stop':
+					var newTime = _Utils_eq(model.direction, $author$project$Main$CountingDown) ? 0 : (model.time / 5);
 					var modelWithNewTime = _Utils_update(
 						model,
-						{running: false, time: model.time / 5});
+						{running: false, time: newTime});
 					var $temp$msg = $author$project$Main$ToggleDirection,
 						$temp$model = modelWithNewTime;
 					msg = $temp$msg;
